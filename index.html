@@ -329,16 +329,17 @@
                 
                  // Try to parse as JSON first
                  let data;
+                 const responseText = await response.text();
+                 console.log('Raw webhook response:', responseText.substring(0, 500));
+                 console.log('Response status:', response.status, response.statusText);
+                 
                  try {
-                     data = await response.json();
-                     console.log('Webhook JSON response:', data);
+                     data = JSON.parse(responseText);
+                     console.log('Parsed as JSON:', data);
                  } catch (e) {
-                     // If not JSON, check if it's HTML with Name in it
-                     const text = await response.text();
-                     console.log('Webhook text response:', text.substring(0, 200));
-                     
+                     console.log('Not JSON, trying HTML parsing');
                      // Extract Name from HTML if present
-                     const nameMatch = text.match(/Hi\s+([^<]+)/);
+                     const nameMatch = responseText.match(/Hi\s+([^<]+)/);
                      if (nameMatch && nameMatch[1]) {
                          data = { success: true, Name: nameMatch[1].trim() };
                      } else {
