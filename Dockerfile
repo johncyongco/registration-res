@@ -14,8 +14,5 @@ COPY Asset/ /usr/share/nginx/html/Asset/
 # Expose port 80
 EXPOSE 80
 
-# Default environment variable (can be overridden)
-ENV N8N_WEBHOOK_URL=YOUR_N8N_WEBHOOK_URL
-
-# Start nginx with environment variable substitution
-CMD ["/bin/sh", "-c", "envsubst '$$N8N_WEBHOOK_URL' < /etc/nginx/templates/nginx.conf.template > /etc/nginx/nginx.conf && nginx -g 'daemon off;'"]
+# Start nginx
+CMD ["nginx", "-g", "daemon off;"]
