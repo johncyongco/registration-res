@@ -27,10 +27,7 @@ http {
         location / {
             try_files $uri $uri/ =404;
             
-            # Inject N8N_WEBHOOK_URL environment variable into HTML
-            sub_filter 'YOUR_N8N_WEBHOOK_URL' '${N8N_WEBHOOK_URL}';
-            sub_filter_once on;
-            sub_filter_types text/html;
+
         }
 
         # Cache static assets
