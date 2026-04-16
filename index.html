@@ -529,8 +529,6 @@
                  const responseText = await response.text();
                  console.log('Raw webhook response:', responseText.substring(0, 500));
                  console.log('Response status:', response.status, response.statusText);
-                 // Show response in alert for mobile debugging
-                 alert('Response: ' + response.status + '\nLength: ' + responseText.length + ' chars');
                  
                   try {
                       data = JSON.parse(responseText);
@@ -565,8 +563,6 @@
                  } catch (error) {
                 console.error('Error processing QR code:', error);
                 document.getElementById('result').textContent = 'Error: ' + error.message;
-                // Show alert for mobile debugging
-                alert('Error: ' + error.message + '\nCheck console for details');
                 showError();
             }
         }
