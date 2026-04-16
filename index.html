@@ -307,9 +307,19 @@
                 max-width: 100%;
             }
             
-            .logo {
-                height: 50px;
-            }
+        .logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .logo.poster {
+            height: 80px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            border: 2px solid rgba(217, 116, 58, 0.3);
+        }
             
             .logo-container {
                 gap: 20px;
@@ -368,6 +378,8 @@
         <div class="content-wrapper">
             <div class="logo-container">
                 <img src="Asset/South 2 Logo.png" alt="South 2 Logo" class="logo">
+                <div class="logo-divider"></div>
+                <img src="Asset/Poster.png" alt="Camp Panaghiusa Poster" class="logo poster">
                 <div class="logo-divider"></div>
                 <img src="Asset/Cluster 2 Logo.png" alt="Cluster 2 Logo" class="logo">
             </div>
