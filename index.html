@@ -558,7 +558,7 @@
         let html5QrCode = null;
         let isProcessing = false;
         let scannerActive = false;
-        let currentCameraId = null;
+        let currentCameraDeviceId = null;
         let availableCameras = [];
         let currentCameraIndex = 0;
 
@@ -631,7 +631,7 @@
             
             // Small delay before restarting scanner
             setTimeout(() => {
-                startScanner(currentCameraId);
+                startScanner(currentCameraDeviceId);
             }, 100);
         }
 
@@ -736,6 +736,7 @@
             
             // If cameraId is provided, use it
             if (cameraId) {
+                console.log('Starting scanner with camera ID:', cameraId);
                 html5QrCode.start(
                     cameraId,
                     config,
@@ -745,19 +746,21 @@
                     }
                 ).then(() => {
                     scannerActive = true;
-                    currentCameraId = cameraId;
+                    currentCameraDeviceId = cameraId;
                     updateStatus('Scanning...');
                     document.getElementById('startScannerBtn').classList.add('hidden');
                     document.getElementById('switchCameraBtn').classList.remove('hidden');
                 }).catch(err => {
                     console.error('Failed to start specific camera:', err);
                     // Fallback to default behavior
+                    console.log('Falling back to default camera');
                     startWithDefaultCamera();
                 });
                 return;
             }
             
             // Default behavior: try rear camera first
+            console.log('Starting scanner with default camera');
             startWithDefaultCamera();
         }
         
@@ -775,6 +778,34 @@
                 }
             };
             
+            // If we have detected cameras, use the first one (usually rear)
+            if (availableCameras.length > 0) {
+                const firstCamera = availableCameras[0];
+                currentCameraDeviceId = firstCamera.id;
+                currentCameraIndex = 0;
+                
+                html5QrCode.start(
+                    firstCamera.id,
+                    config,
+                    qrCodeSuccessCallback,
+                    (errorMessage) => {
+                        console.log('QR Code scan error:', errorMessage);
+                    }
+                ).then(() => {
+                    scannerActive = true;
+                    updateStatus('Scanning...');
+                    document.getElementById('startScannerBtn').classList.add('hidden');
+                    document.getElementById('switchCameraBtn').classList.remove('hidden');
+                }).catch(err => {
+                    console.error('Failed to start first camera:', err);
+                    updateStatus('Camera error', false);
+                    document.getElementById('startScannerBtn').classList.remove('hidden');
+                    document.getElementById('switchCameraBtn').classList.add('hidden');
+                });
+                return;
+            }
+            
+            // Fallback to facingMode if no cameras detected
             // Try rear camera first, fallback to front camera
             html5QrCode.start(
                 { facingMode: { exact: "environment" } },
@@ -785,7 +816,6 @@
                 }
             ).then(() => {
                 scannerActive = true;
-                currentCameraId = 'environment';
                 updateStatus('Scanning (rear camera)...');
                 document.getElementById('startScannerBtn').classList.add('hidden');
                 document.getElementById('switchCameraBtn').classList.remove('hidden');
@@ -801,7 +831,6 @@
                     }
                 ).then(() => {
                     scannerActive = true;
-                    currentCameraId = 'user';
                     updateStatus('Scanning (front camera)...');
                     document.getElementById('startScannerBtn').classList.add('hidden');
                     document.getElementById('switchCameraBtn').classList.remove('hidden');
@@ -852,6 +881,7 @@
             // Cycle to next camera
             currentCameraIndex = (currentCameraIndex + 1) % availableCameras.length;
             const nextCamera = availableCameras[currentCameraIndex];
+            console.log('Switching to camera:', nextCamera.id, nextCamera.label);
             
             // Stop current scanner and start with new camera
             stopScanner().then(() => {
@@ -870,10 +900,12 @@
                 if (cameras && cameras.length > 0) {
                     availableCameras = cameras;
                     console.log('Available cameras:', cameras);
+                    console.log('Camera count:', cameras.length);
                     
                     // Show camera button if multiple cameras available
                     if (cameras.length > 1) {
                         document.getElementById('switchCameraBtn').classList.remove('hidden');
+                        console.log('Camera switching enabled');
                     }
                     
                     startScanner();
