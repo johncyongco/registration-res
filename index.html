@@ -93,11 +93,19 @@
             flex-wrap: wrap;
         }
 
-        .logo {
+        .logo-placeholder {
             height: 60px;
-            width: auto;
-            object-fit: contain;
-            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0 20px;
+            background: linear-gradient(135deg, #5B6F3A, #3F4F2A);
+            color: white;
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-radius: 8px;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 12px rgba(91, 111, 58, 0.2);
         }
 
         .logo-divider {
@@ -364,9 +372,9 @@
         <div class="halo"></div>
         <div class="content-wrapper">
             <div class="logo-container">
-                <img src="Asset/South 2 Logo.png" alt="South 2 Logo" class="logo">
+                <div class="logo-placeholder">SOUTH 2</div>
                 <div class="logo-divider"></div>
-                <img src="Asset/Cluster 2 Logo.png" alt="Cluster 2 Logo" class="logo">
+                <div class="logo-placeholder">CLUSTER 2</div>
             </div>
             
             <h1>CAMP <span class="event-year">PANAGHIUSA</span> 2026</h1>
