@@ -663,6 +663,19 @@
                 const url = new URL(WEBHOOK_URL);
                 url.searchParams.append('code', codeParam);
                 
+                console.log('Sending to n8n:', url.toString());
+                console.log('Code parameter (base64):', codeParam);
+                
+                // Try to decode and show what's in the QR code
+                try {
+                    const decodedData = atob(codeParam);
+                    console.log('Decoded QR data:', decodedData);
+                    const jsonData = JSON.parse(decodedData);
+                    console.log('Parsed QR JSON:', jsonData);
+                } catch (e) {
+                    console.log('Could not decode QR data:', e.message);
+                }
+                
                 const response = await fetch(url.toString(), {
                     method: 'GET',
                     headers: {
@@ -677,8 +690,9 @@
                  // Try to parse as JSON first
                  let data;
                  const responseText = await response.text();
-                 console.log('Raw webhook response:', responseText.substring(0, 500));
+                 console.log('Raw webhook response (first 300 chars):', responseText.substring(0, 300));
                  console.log('Response status:', response.status, response.statusText);
+                 console.log('QR code sent:', decodedText);
                  
                   try {
                       data = JSON.parse(responseText);
@@ -697,8 +711,10 @@
                       // Extract Name from HTML if present (n8n returns HTML)
                       const nameMatch = responseText.match(/Hi\s+([^<]+)/);
                       if (nameMatch && nameMatch[1]) {
+                          console.log('Extracted name from HTML:', nameMatch[1].trim());
                           data = { success: true, Name: nameMatch[1].trim() };
                       } else {
+                          console.log('No name found in HTML response');
                           data = { success: false };
                       }
                   }
