@@ -303,6 +303,16 @@
             result.textContent = '';
             updateStatus('Ready to scan');
             isProcessing = false;
+            
+            // Ensure scanner is properly stopped before restarting
+            stopScanner();
+            scannerActive = false;
+            html5QrCode = null;
+            
+            // Small delay before restarting scanner
+            setTimeout(() => {
+                startScanner();
+            }, 100);
         }
 
         async function processQRCode(decodedText) {
@@ -329,14 +339,15 @@
                     }
                 }
                 
-                // Send the code parameter to webhook
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
+                // Send the code parameter to webhook - use GET for sheet updates
+                const url = new URL(WEBHOOK_URL);
+                url.searchParams.append('code', codeParam);
+                
+                const response = await fetch(url.toString(), {
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                    },
-                    body: JSON.stringify({ code: codeParam })
+                    }
                 });
                 
                 if (!response.ok) {
@@ -445,21 +456,24 @@
             if (html5QrCode && scannerActive) {
                 html5QrCode.stop().then(() => {
                     scannerActive = false;
-                    html5QrCode.clear();
+                    // Clear the scanner element
+                    const readerElement = document.getElementById('reader');
+                    if (readerElement) {
+                        readerElement.innerHTML = '';
+                    }
                 }).catch(err => {
                     console.error('Failed to stop scanner:', err);
+                    scannerActive = false;
                 });
             }
         }
 
         document.getElementById('scanNextBtn').addEventListener('click', () => {
             resetUI();
-            startScanner();
         });
 
         document.getElementById('retryBtn').addEventListener('click', () => {
             resetUI();
-            startScanner();
         });
 
         document.getElementById('startScannerBtn').addEventListener('click', startScanner);
