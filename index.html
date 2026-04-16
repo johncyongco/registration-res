@@ -312,15 +312,14 @@
             updateStatus('Processing check-in...');
             
             try {
-                 // Send QR code as query parameter for GET request
-                 const url = new URL(WEBHOOK_URL);
-                 url.searchParams.append('qr', decodedText);
-                 
-                 const response = await fetch(url.toString(), {
-                    method: 'GET',
+                 // Try POST with JSON body (more reliable)
+                 const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
                     headers: {
+                        'Content-Type': 'application/json',
                         'Accept': 'application/json',
-                    }
+                    },
+                    body: JSON.stringify({ qr: decodedText })
                  });
                 
                 if (!response.ok) {
