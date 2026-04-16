@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Camp Panaghiusa 2026 - QR Check-in</title>
-    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
     <style>
         * {
             margin: 0;
@@ -351,22 +351,41 @@
             const config = {
                 fps: 10,
                 qrbox: { width: 250, height: 250 },
-                aspectRatio: 1.0
+                aspectRatio: 1.0,
+                disableFlip: false
             };
             
+            // Try rear camera first, fallback to any camera
             html5QrCode.start(
-                { facingMode: "environment" },
+                { facingMode: { exact: "environment" } },
                 config,
                 qrCodeSuccessCallback,
-                () => {}
+                (errorMessage) => {
+                    console.log('QR Code scan error:', errorMessage);
+                }
             ).then(() => {
                 scannerActive = true;
                 updateStatus('Scanning...');
                 document.getElementById('startScannerBtn').classList.add('hidden');
             }).catch(err => {
-                console.error('Failed to start scanner:', err);
-                updateStatus('Camera error', false);
-                document.getElementById('startScannerBtn').classList.remove('hidden');
+                console.error('Failed to start rear camera, trying any camera:', err);
+                // Fallback to any available camera
+                html5QrCode.start(
+                    { facingMode: "user" },
+                    config,
+                    qrCodeSuccessCallback,
+                    (errorMessage) => {
+                        console.log('QR Code scan error:', errorMessage);
+                    }
+                ).then(() => {
+                    scannerActive = true;
+                    updateStatus('Scanning (front camera)...');
+                    document.getElementById('startScannerBtn').classList.add('hidden');
+                }).catch(fallbackErr => {
+                    console.error('Failed to start any camera:', fallbackErr);
+                    updateStatus('Camera error', false);
+                    document.getElementById('startScannerBtn').classList.remove('hidden');
+                });
             });
         }
 
@@ -394,12 +413,19 @@
         document.getElementById('startScannerBtn').addEventListener('click', startScanner);
 
         window.addEventListener('load', () => {
-            if (Html5Qrcode.getCameras().then(cameras => cameras.length > 0).catch(() => false)) {
-                startScanner();
-            } else {
-                updateStatus('No camera found', false);
+            // Check camera access with better error handling
+            Html5Qrcode.getCameras().then(cameras => {
+                if (cameras && cameras.length > 0) {
+                    startScanner();
+                } else {
+                    updateStatus('No camera found', false);
+                    document.getElementById('startScannerBtn').classList.remove('hidden');
+                }
+            }).catch(err => {
+                console.error('Camera access error:', err);
+                updateStatus('Camera access denied', false);
                 document.getElementById('startScannerBtn').classList.remove('hidden');
-            }
+            });
         });
 
         window.addEventListener('beforeunload', () => {
