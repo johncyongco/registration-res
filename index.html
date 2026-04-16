@@ -312,28 +312,34 @@
             updateStatus('Processing check-in...');
             
             try {
-                const response = await fetch(WEBHOOK_URL, {
-                    method: 'POST',
+                 // Send QR code as query parameter for GET request
+                 const url = new URL(WEBHOOK_URL);
+                 url.searchParams.append('qr', decodedText);
+                 
+                 const response = await fetch(url.toString(), {
+                    method: 'GET',
                     headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ qr: decodedText })
-                });
+                        'Accept': 'application/json',
+                    }
+                 });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
-                const data = await response.json();
+                 const data = await response.json();
+                 console.log('Webhook response:', data);
                 
                 if (data.success && data.Name) {
                     stopScanner();
                     showSuccess(data.Name);
                 } else {
+                    console.error('Check-in failed:', data);
                     showError();
                 }
-            } catch (error) {
+             } catch (error) {
                 console.error('Error processing QR code:', error);
+                document.getElementById('result').textContent = 'Error: ' + error.message;
                 showError();
             }
         }
