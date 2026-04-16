@@ -6,6 +6,8 @@
     <title>Camp Panaghiusa 2026 - QR Check-in</title>
     <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" type="text/javascript"></script>
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+        
         * {
             margin: 0;
             padding: 0;
@@ -13,114 +15,214 @@
         }
 
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            font-family: 'Poppins', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
             min-height: 100vh;
-            background: linear-gradient(-45deg, #1a237e, #311b92, #4a148c, #880e4f);
-            background-size: 400% 400%;
-            animation: gradient 15s ease infinite;
+            background: linear-gradient(135deg, #F5E6C8 0%, #EFD9A7 50%, #F3EAD8 100%);
             display: flex;
             justify-content: center;
             align-items: center;
             padding: 20px;
             overflow-x: hidden;
+            position: relative;
         }
 
-        @keyframes gradient {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%235B6F3A' fill-opacity='0.03' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.4;
+            z-index: -1;
         }
 
         .container {
             width: 100%;
             max-width: 800px;
             text-align: center;
+            position: relative;
+            z-index: 1;
         }
 
-        .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 40px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-            width: 100%;
+        .content-wrapper {
+            position: relative;
+            padding: 50px 40px;
+            background: rgba(255, 255, 255, 0.92);
+            border-radius: 24px;
+            box-shadow: 0 12px 40px rgba(91, 111, 58, 0.12);
+            border: 1px solid rgba(91, 111, 58, 0.1);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+
+        .content-wrapper::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(135deg, #D9743A, #5B6F3A, #3F4F2A);
+            border-radius: 26px;
+            z-index: -1;
+            opacity: 0.1;
+        }
+
+        .halo {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 110%;
+            height: 110%;
+            border-radius: 28px;
+            border: 2px solid #D9743A;
+            opacity: 0.15;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            height: 60px;
+            width: auto;
+            object-fit: contain;
+            filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+        }
+
+        .logo-divider {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(to bottom, transparent, #D9743A, transparent);
+            opacity: 0.5;
         }
 
         h1 {
-            color: white;
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            color: #3F4F2A;
+            font-size: 2.8rem;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
         }
 
         .subtitle {
-            color: rgba(255, 255, 255, 0.9);
-            font-size: 1.2rem;
-            margin-bottom: 30px;
+            color: #5B6F3A;
+            font-size: 1.3rem;
+            margin-bottom: 35px;
+            font-weight: 400;
+            letter-spacing: 0.5px;
+        }
+
+        .event-year {
+            color: #D9743A;
+            font-weight: 600;
         }
 
         #reader {
             width: 100%;
-            max-width: 500px;
+            max-width: 480px;
             margin: 0 auto 30px;
-            border-radius: 15px;
+            border-radius: 16px;
             overflow: hidden;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-shadow: 0 6px 20px rgba(91, 111, 58, 0.15);
+            border: 1px solid rgba(91, 111, 58, 0.1);
         }
 
         #result {
-            color: white;
+            color: #5B6F3A;
             font-size: 1.1rem;
             margin: 20px 0;
             min-height: 24px;
+            font-weight: 500;
         }
 
         .success-message {
-            color: white;
-            font-size: 3.5rem;
-            font-weight: 900;
+            color: #D9743A;
+            font-size: 3.2rem;
+            font-weight: 700;
             line-height: 1.2;
             text-transform: uppercase;
-            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-            animation: pulse 2s infinite;
             margin: 40px 0;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(217, 116, 58, 0.2);
+            animation: fadeInUp 0.6s ease-out;
         }
 
         .error-message {
-            color: #ff6b6b;
-            font-size: 2.5rem;
-            font-weight: 900;
+            color: #C44536;
+            font-size: 2.2rem;
+            font-weight: 600;
             text-transform: uppercase;
-            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
             margin: 40px 0;
+            letter-spacing: 1px;
+            animation: fadeInUp 0.6s ease-out;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
         @keyframes pulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
+            50% { transform: scale(1.03); }
             100% { transform: scale(1); }
         }
 
         .button {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #D9743A 0%, #C45A2A 100%);
             color: white;
             border: none;
-            padding: 18px 40px;
-            font-size: 1.2rem;
+            padding: 16px 36px;
+            font-size: 1.1rem;
             font-weight: 600;
             border-radius: 50px;
             cursor: pointer;
             transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 4px 15px rgba(217, 116, 58, 0.3);
             margin-top: 20px;
             display: inline-block;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+            transition: 0.5s;
         }
 
         .button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 6px 20px rgba(217, 116, 58, 0.4);
+        }
+
+        .button:hover::before {
+            left: 100%;
         }
 
         .button:active {
@@ -139,8 +241,8 @@
 
         .status-indicator {
             display: inline-block;
-            width: 12px;
-            height: 12px;
+            width: 10px;
+            height: 10px;
             border-radius: 50%;
             margin-right: 10px;
             animation: blink 1.5s infinite;
@@ -148,99 +250,146 @@
 
         @keyframes blink {
             0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
+            50% { opacity: 0.4; }
         }
 
         .status-active {
-            background-color: #4CAF50;
+            background-color: #5B6F3A;
         }
 
         .status-inactive {
-            background-color: #ff9800;
+            background-color: #D9743A;
         }
 
         .status-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 20px;
-            color: white;
+            margin-bottom: 25px;
+            color: #5B6F3A;
             font-size: 1rem;
+            font-weight: 500;
+        }
+
+        .scan-instruction {
+            color: #3F4F2A;
+            font-size: 1rem;
+            margin-top: 15px;
+            opacity: 0.8;
+            font-style: italic;
         }
 
         @media (max-width: 768px) {
-            .glass-card {
-                padding: 25px;
+            .content-wrapper {
+                padding: 35px 25px;
             }
             
             h1 {
-                font-size: 2rem;
+                font-size: 2.2rem;
+            }
+            
+            .subtitle {
+                font-size: 1.1rem;
             }
             
             .success-message {
-                font-size: 2.5rem;
+                font-size: 2.4rem;
             }
             
             .error-message {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             #reader {
                 max-width: 100%;
             }
+            
+            .logo {
+                height: 50px;
+            }
+            
+            .logo-container {
+                gap: 20px;
+            }
         }
 
         @media (max-width: 480px) {
             body {
-                padding: 10px;
+                padding: 15px;
             }
             
-            .glass-card {
-                padding: 20px;
+            .content-wrapper {
+                padding: 25px 20px;
             }
             
             h1 {
                 font-size: 1.8rem;
             }
             
+            .subtitle {
+                font-size: 1rem;
+                margin-bottom: 25px;
+            }
+            
             .success-message {
-                font-size: 2rem;
+                font-size: 1.8rem;
             }
             
             .error-message {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
             }
             
             .button {
-                padding: 15px 30px;
-                font-size: 1.1rem;
+                padding: 14px 28px;
+                font-size: 1rem;
                 width: 100%;
+            }
+            
+            .logo {
+                height: 40px;
+            }
+            
+            .logo-container {
+                gap: 15px;
+            }
+            
+            .logo-divider {
+                height: 30px;
             }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="glass-card">
-            <h1>Camp Panaghiusa 2026</h1>
-            <div class="subtitle">QR Code Check-in System</div>
+        <div class="halo"></div>
+        <div class="content-wrapper">
+            <div class="logo-container">
+                <img src="Asset/South 2 Logo.png" alt="South 2 Logo" class="logo">
+                <div class="logo-divider"></div>
+                <img src="Asset/Cluster 2 Logo.png" alt="Cluster 2 Logo" class="logo">
+            </div>
+            
+            <h1>CAMP <span class="event-year">PANAGHIUSA</span> 2026</h1>
+            <div class="subtitle">Welcome to Our Catholic Youth Gathering</div>
             
             <div class="status-container">
                 <span class="status-indicator status-active" id="statusIndicator"></span>
-                <span id="statusText">Ready to scan</span>
+                <span id="statusText">Ready to scan your QR code</span>
             </div>
             
             <div id="reader"></div>
+            <div class="scan-instruction">Position QR code within the frame</div>
             
             <div id="result"></div>
             
             <div id="successDisplay" class="hidden">
                 <div class="success-message" id="successMessage"></div>
-                <button id="scanNextBtn" class="button">Scan Next Person</button>
+                <button id="scanNextBtn" class="button">Scan Next Attendee</button>
             </div>
             
             <div id="errorDisplay" class="hidden">
-                <div class="error-message">INVALID OR FAILED CHECK-IN</div>
+                <div class="error-message">CHECK-IN NOT RECOGNIZED</div>
+                <div class="scan-instruction">Please try again or contact registration desk</div>
                 <button id="retryBtn" class="button">Try Again</button>
             </div>
             
@@ -267,9 +416,11 @@
             const successMessage = document.getElementById('successMessage');
             const scanner = document.getElementById('reader');
             const result = document.getElementById('result');
+            const instruction = document.querySelector('.scan-instruction');
             
             scanner.classList.add('hidden');
             result.classList.add('hidden');
+            if (instruction) instruction.classList.add('hidden');
             successDisplay.classList.remove('hidden');
             
             successMessage.textContent = `Hi ${name.toUpperCase()}, WELCOME TO CAMP PANAGHIUSA 2026`;
@@ -280,9 +431,11 @@
             const errorDisplay = document.getElementById('errorDisplay');
             const scanner = document.getElementById('reader');
             const result = document.getElementById('result');
+            const instruction = document.querySelector('.scan-instruction');
             
             scanner.classList.add('hidden');
             result.classList.add('hidden');
+            if (instruction) instruction.classList.add('hidden');
             errorDisplay.classList.remove('hidden');
             updateStatus('Check-in failed', false);
         }
@@ -293,15 +446,17 @@
             const scanner = document.getElementById('reader');
             const result = document.getElementById('result');
             const startBtn = document.getElementById('startScannerBtn');
+            const instruction = document.querySelector('.scan-instruction');
             
             successDisplay.classList.add('hidden');
             errorDisplay.classList.add('hidden');
             scanner.classList.remove('hidden');
             result.classList.remove('hidden');
             startBtn.classList.add('hidden');
+            if (instruction) instruction.classList.remove('hidden');
             
             result.textContent = '';
-            updateStatus('Ready to scan');
+            updateStatus('Ready to scan your QR code');
             isProcessing = false;
             
             // Ensure scanner is properly stopped before restarting
