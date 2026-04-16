@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camp Panaghiusa 2026 - QR Check-in</title>
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            min-height: 100vh;
+            background: linear-gradient(-45deg, #1a237e, #311b92, #4a148c, #880e4f);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            text-align: center;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            padding: 40px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            width: 100%;
+        }
+
+        h1 {
+            color: white;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+        }
+
+        #reader {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        #result {
+            color: white;
+            font-size: 1.1rem;
+            margin: 20px 0;
+            min-height: 24px;
+        }
+
+        .success-message {
+            color: white;
+            font-size: 3.5rem;
+            font-weight: 900;
+            line-height: 1.2;
+            text-transform: uppercase;
+            text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            animation: pulse 2s infinite;
+            margin: 40px 0;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 2.5rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            margin: 40px 0;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 18px 40px;
+            font-size: 1.2rem;
+            font-weight: 600;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+            display: inline-block;
+        }
+
+        .button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .button:active {
+            transform: translateY(0);
+        }
+
+        .button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .status-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 10px;
+            animation: blink 1.5s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .status-active {
+            background-color: #4CAF50;
+        }
+
+        .status-inactive {
+            background-color: #ff9800;
+        }
+
+        .status-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            color: white;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 768px) {
+            .glass-card {
+                padding: 25px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .success-message {
+                font-size: 2.5rem;
+            }
+            
+            .error-message {
+                font-size: 2rem;
+            }
+            
+            #reader {
+                max-width: 100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+            
+            .glass-card {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .success-message {
+                font-size: 2rem;
+            }
+            
+            .error-message {
+                font-size: 1.6rem;
+            }
+            
+            .button {
+                padding: 15px 30px;
+                font-size: 1.1rem;
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="glass-card">
+            <h1>Camp Panaghiusa 2026</h1>
+            <div class="subtitle">QR Code Check-in System</div>
+            
+            <div class="status-container">
+                <span class="status-indicator status-active" id="statusIndicator"></span>
+                <span id="statusText">Ready to scan</span>
+            </div>
+            
+            <div id="reader"></div>
+            
+            <div id="result"></div>
+            
+            <div id="successDisplay" class="hidden">
+                <div class="success-message" id="successMessage"></div>
+                <button id="scanNextBtn" class="button">Scan Next Person</button>
+            </div>
+            
+            <div id="errorDisplay" class="hidden">
+                <div class="error-message">INVALID OR FAILED CHECK-IN</div>
+                <button id="retryBtn" class="button">Try Again</button>
+            </div>
+            
+            <button id="startScannerBtn" class="button hidden">Start Scanner</button>
+        </div>
+    </div>
+
+    <script>
+        const WEBHOOK_URL = 'YOUR_N8N_WEBHOOK_URL';
+        let html5QrCode = null;
+        let isProcessing = false;
+        let scannerActive = false;
+
+        function updateStatus(text, isActive = true) {
+            const indicator = document.getElementById('statusIndicator');
+            const statusText = document.getElementById('statusText');
+            
+            statusText.textContent = text;
+            indicator.className = 'status-indicator ' + (isActive ? 'status-active' : 'status-inactive');
+        }
+
+        function showSuccess(name) {
+            const successDisplay = document.getElementById('successDisplay');
+            const successMessage = document.getElementById('successMessage');
+            const scanner = document.getElementById('reader');
+            const result = document.getElementById('result');
+            
+            scanner.classList.add('hidden');
+            result.classList.add('hidden');
+            successDisplay.classList.remove('hidden');
+            
+            successMessage.textContent = `Hi ${name.toUpperCase()}, WELCOME TO CAMP PANAGHIUSA 2026`;
+            updateStatus('Check-in successful', false);
+        }
+
+        function showError() {
+            const errorDisplay = document.getElementById('errorDisplay');
+            const scanner = document.getElementById('reader');
+            const result = document.getElementById('result');
+            
+            scanner.classList.add('hidden');
+            result.classList.add('hidden');
+            errorDisplay.classList.remove('hidden');
+            updateStatus('Check-in failed', false);
+        }
+
+        function resetUI() {
+            const successDisplay = document.getElementById('successDisplay');
+            const errorDisplay = document.getElementById('errorDisplay');
+            const scanner = document.getElementById('reader');
+            const result = document.getElementById('result');
+            const startBtn = document.getElementById('startScannerBtn');
+            
+            successDisplay.classList.add('hidden');
+            errorDisplay.classList.add('hidden');
+            scanner.classList.remove('hidden');
+            result.classList.remove('hidden');
+            startBtn.classList.add('hidden');
+            
+            result.textContent = '';
+            updateStatus('Ready to scan');
+            isProcessing = false;
+        }
+
+        async function processQRCode(decodedText) {
+            if (isProcessing) return;
+            
+            isProcessing = true;
+            updateStatus('Processing check-in...');
+            
+            try {
+                const response = await fetch(WEBHOOK_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ qr: decodedText })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                if (data.success && data.Name) {
+                    stopScanner();
+                    showSuccess(data.Name);
+                } else {
+                    showError();
+                }
+            } catch (error) {
+                console.error('Error processing QR code:', error);
+                showError();
+            }
+        }
+
+        function startScanner() {
+            if (scannerActive) return;
+            
+            html5QrCode = new Html5Qrcode("reader");
+            const qrCodeSuccessCallback = (decodedText) => {
+                if (!isProcessing) {
+                    processQRCode(decodedText);
+                }
+            };
+            
+            const config = {
+                fps: 10,
+                qrbox: { width: 250, height: 250 },
+                aspectRatio: 1.0
+            };
+            
+            html5QrCode.start(
+                { facingMode: "environment" },
+                config,
+                qrCodeSuccessCallback,
+                () => {}
+            ).then(() => {
+                scannerActive = true;
+                updateStatus('Scanning...');
+                document.getElementById('startScannerBtn').classList.add('hidden');
+            }).catch(err => {
+                console.error('Failed to start scanner:', err);
+                updateStatus('Camera error', false);
+                document.getElementById('startScannerBtn').classList.remove('hidden');
+            });
+        }
+
+        function stopScanner() {
+            if (html5QrCode && scannerActive) {
+                html5QrCode.stop().then(() => {
+                    scannerActive = false;
+                    html5QrCode.clear();
+                }).catch(err => {
+                    console.error('Failed to stop scanner:', err);
+                });
+            }
+        }
+
+        document.getElementById('scanNextBtn').addEventListener('click', () => {
+            resetUI();
+            startScanner();
+        });
+
+        document.getElementById('retryBtn').addEventListener('click', () => {
+            resetUI();
+            startScanner();
+        });
+
+        document.getElementById('startScannerBtn').addEventListener('click', startScanner);
+
+        window.addEventListener('load', () => {
+            if (Html5Qrcode.getCameras().then(cameras => cameras.length > 0).catch(() => false)) {
+                startScanner();
+            } else {
+                updateStatus('No camera found', false);
+                document.getElementById('startScannerBtn').classList.remove('hidden');
+            }
+        });
+
+        window.addEventListener('beforeunload', () => {
+            stopScanner();
+        });
+    </script>
+</body>
+</html>
