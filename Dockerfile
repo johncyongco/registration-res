@@ -4,7 +4,7 @@ FROM nginx:alpine
 RUN apk add --no-cache gettext
 
 # Copy nginx configuration
-COPY nginx.conf.template /etc/nginx/nginx.conf
+COPY nginx.conf.template /etc/nginx/conf.d/default.conf
 
 # Copy HTML file, favicon, and assets
 COPY index.html /usr/share/nginx/html/
