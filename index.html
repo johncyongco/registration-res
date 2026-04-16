@@ -312,15 +312,32 @@
             updateStatus('Processing check-in...');
             
             try {
-                 // Try POST with JSON body (more reliable)
-                 const response = await fetch(WEBHOOK_URL, {
+                // Parse the QR code URL to extract the code parameter
+                let codeParam = decodedText;
+                
+                // If it's a URL, extract the code parameter
+                if (decodedText.includes('n8n.rootinize.team/webhook/event-checkin')) {
+                    try {
+                        const url = new URL(decodedText);
+                        codeParam = url.searchParams.get('code');
+                        if (!codeParam) {
+                            throw new Error('No code parameter found in QR URL');
+                        }
+                    } catch (e) {
+                        console.error('Failed to parse QR URL:', e);
+                        // If not a valid URL, use the whole text as code
+                    }
+                }
+                
+                // Send the code parameter to webhook
+                const response = await fetch(WEBHOOK_URL, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
                         'Accept': 'application/json',
                     },
-                    body: JSON.stringify({ qr: decodedText })
-                 });
+                    body: JSON.stringify({ code: codeParam })
+                });
                 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
@@ -334,19 +351,28 @@
                  // Show response in alert for mobile debugging
                  alert('Response: ' + response.status + '\nLength: ' + responseText.length + ' chars');
                  
-                 try {
-                     data = JSON.parse(responseText);
-                     console.log('Parsed as JSON:', data);
-                 } catch (e) {
-                     console.log('Not JSON, trying HTML parsing');
-                     // Extract Name from HTML if present
-                     const nameMatch = responseText.match(/Hi\s+([^<]+)/);
-                     if (nameMatch && nameMatch[1]) {
-                         data = { success: true, Name: nameMatch[1].trim() };
-                     } else {
-                         data = { success: false };
-                     }
-                 }
+                  try {
+                      data = JSON.parse(responseText);
+                      console.log('Parsed as JSON:', data);
+                      
+                      // Handle n8n error response format
+                      if (data.status === 'error') {
+                          data = { success: false, error: data.error };
+                      }
+                      // Handle n8n success response (if it returns JSON with name)
+                      else if (data.name || data.Name) {
+                          data = { success: true, Name: data.name || data.Name };
+                      }
+                  } catch (e) {
+                      console.log('Not JSON, trying HTML parsing');
+                      // Extract Name from HTML if present (n8n returns HTML)
+                      const nameMatch = responseText.match(/Hi\s+([^<]+)/);
+                      if (nameMatch && nameMatch[1]) {
+                          data = { success: true, Name: nameMatch[1].trim() };
+                      } else {
+                          data = { success: false };
+                      }
+                  }
                 
                 if (data.success && data.Name) {
                     stopScanner();

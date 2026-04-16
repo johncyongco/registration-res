@@ -6,8 +6,9 @@ RUN apk add --no-cache gettext
 # Copy nginx configuration
 COPY nginx.conf.template /etc/nginx/templates/nginx.conf.template
 
-# Copy HTML file
+# Copy HTML file and favicon
 COPY index.html /usr/share/nginx/html/
+COPY favicon.ico /usr/share/nginx/html/
 
 # Expose port 80
 EXPOSE 80
